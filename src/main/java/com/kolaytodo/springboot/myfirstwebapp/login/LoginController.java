@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -22,10 +23,15 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "login")
+	public String gotoLoginPage() {
+		return "login";
+	}
+
+	@RequestMapping(value = "login", method=RequestMethod.POST)
 	public String loginPage(@RequestParam String username, @RequestParam String password, ModelMap model) {
 
-		log.debug("{}",authenticationService.authenticate(username, password));
-		
+		log.debug("{}", authenticationService.authenticate(username, password));
+
 		if (authenticationService.authenticate(username, password)) {
 			model.put("username", username);
 			model.put("password", password);
@@ -33,7 +39,7 @@ public class LoginController {
 			return "redirect:list-todos";
 //			return "welcome";
 		}
-		model.put("errorMessage", "Invalid credentials! Please try again");		
+		model.put("errorMessage", "Invalid credentials! Please try again");
 		return "login";
 	}
 }
