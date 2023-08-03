@@ -2,6 +2,9 @@ package com.kolaytodo.springboot.myfirstwebapp.controllers;
 
 import java.time.LocalDate;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -28,9 +31,11 @@ public class TodoController {
 
 	@RequestMapping("list-todos")
 	public String listAllTodos(ModelMap model) {
-		model.put("todos", todoService.getTodosByUsername("resul"));
+		String username = getLoggedInUsername(model);
+		model.put("todos", todoService.getTodosByUsername(username));
 		return "listTodos";
 	}
+
 
 	@RequestMapping(value = "add-todo", method = RequestMethod.GET)
 	public String showNewTodoPage(ModelMap model) {
@@ -76,6 +81,12 @@ public class TodoController {
 		todoService.updateTodo(todo);
 		return "redirect:list-todos";
 	}
+	
+	private String getLoggedInUsername(ModelMap model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return authentication.getName();
+	}
+
 	
 	
 	
